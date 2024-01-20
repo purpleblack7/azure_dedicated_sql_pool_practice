@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 1",
+	"properties": {
+		"content": {
+			"query": "IF NOT EXISTS(SELECT * FROM sys.databases WHERE name='laptopDB')\nBEGIN\n    CREATE DATABASE laptopDB\n    COLLATE Latin1_General_100_BIN2_UTF8;\nEND\nGO\n\nUSE laptopDB;\nGO\n \nIF NOT EXISTS(SELECT * FROM sys.external_data_sources WHERE name='laptopSource')\nBEGIN\n    CREATE EXTERNAL DATA SOURCE  laptopSource\n    WITH (LOCATION = 'https://laptoppricing.dfs.core.windows.net/');\nEND\nGO\n\nIF NOT EXISTS(SELECT * FROM sys.server_principals WHERE name='laptop_admin')\nBEGIN\n    CREATE LOGIN laptop_admin WITH PASSWORD = 'Admin@123';\n    CREATE USER laptop_admin FOR LOGIN laptop_admin;\nEND\nGO\n\nUSE master;\nGRANT ADMINISTER BULK OPERATIONS TO laptop_admin;\nGO\n\nUSE laptopDB;\nGO\n\n\nCREATE OR ALTER VIEW totalData AS\nSELECT *\nFROM OPENROWSET ( \n    BULK '/laptoppricingfs/laptop_pricing_dataset.parquet',\n    DATA_SOURCE = 'laptopSource',\n    FORMAT='PARQUET'\n    ) AS ttlresult;\nGO\n\n\nCREATE OR ALTER VIEW greaterThan1000 AS\nSELECT *\nFROM OPENROWSET ( \n    BULK '/laptoppricingfs/laptop_pricing_dataset.parquet',\n    DATA_SOURCE = 'laptopSource',\n    FORMAT='PARQUET'\n    ) AS ttlresult\nWHERE [Price] > 1000;\nGO\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "laptopDB",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

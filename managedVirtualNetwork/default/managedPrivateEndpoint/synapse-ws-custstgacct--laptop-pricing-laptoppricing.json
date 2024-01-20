@@ -1,0 +1,7 @@
+{
+	"name": "synapse-ws-custstgacct--laptop-pricing-laptoppricing",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/c3f46110-c435-4bdb-8e72-1abba94bc28f/resourceGroups/laptop_pricing/providers/Microsoft.Storage/storageAccounts/laptoppricing",
+		"groupId": "dfs"
+	}
+}
